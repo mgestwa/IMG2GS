@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+
+# Generated Content (Large files)
+generated_files/
+files/
+*.ply
+
+# OS
+.DS_Store
+Thumbs.db

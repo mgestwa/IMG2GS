@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>img2gs-local | Image to 3D Gaussian Splats</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Import Three.js and OrbitControls from CDN (Modules) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>img2gs-local</h1>
+            <p>Convert 2D Images to 3D Gaussian Splats Local & Private</p>
+        </header>
+
+        <main>
+            <div class="upload-section" id="drop-zone">
+                <input type="file" id="file-input" accept="image/*" hidden>
+                <div class="upload-content">
+                    <div class="icon">📁</div>
+                    <h3>Drag & Drop or Click to Upload</h3>
+                    <p>Supports JPG, PNG</p>
+                </div>
+            </div>
+
+            <div class="status-bar" id="status-bar" style="display: none;">
+                <div class="loader"></div>
+                <span id="status-text">Processing... (Usually takes 5-10s)</span>
+            </div>
+
+            <div class="viewer-section" id="viewer-container" style="display: none;">
+                <canvas id="viewer-canvas"></canvas>
+                <div class="controls">
+                    <button id="download-btn" class="btn">Download PLY</button>
+                    <button id="reset-btn" class="btn secondary">New Image</button>
+                    <div class="info">
+                        Rotate: Left Click | Pan: Right Click | Zoom: Scroll
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by Depth Anything V2 & Gaussian Splatting</p>
+        </footer>
+    </div>
+
+    <script type="module" src="/static/viewer.js?v=12"></script>
+    <script type="module" src="/static/script.js?v=12"></script>
+</body>
+
+</html>

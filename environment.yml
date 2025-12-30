@@ -1,0 +1,21 @@
+name: img2gs-local
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+    - --extra-index-url https://download.pytorch.org/whl/cu121
+    - torch
+    - torchvision
+    - torchaudio
+    - transformers
+    - opencv-python
+    - numpy
+    - scipy
+    - plyfile
+    - fastapi
+    - python-multipart
+    - uvicorn
+    - safetensors
+    - timm
