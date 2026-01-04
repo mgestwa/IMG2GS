@@ -1,7 +1,6 @@
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
 
 # Environments
 .env
@@ -10,15 +9,24 @@ env/
 venv/
 ENV/
 
+# Project Outputs
+generated_files/
+demo_output/
+
+# Temporary Test Data
+pompa.jpg
+optimized.ply
+optimized_gs.ply
+render_result.png
+
+# Verification Artifacts
+verify_image.jpg
+verify_initial.ply
+verify_output.ply
+
+# Debug Scripts
+debug_image.py
+
 # IDEs
 .vscode/
 .idea/
-
-# Generated Content (Large files)
-generated_files/
-files/
-*.ply
-
-# OS
-.DS_Store
-Thumbs.db
