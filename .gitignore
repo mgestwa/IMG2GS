@@ -13,10 +13,12 @@ ENV/
 generated_files/
 demo_output/
 
+# Large 3D Files
+*.ply
+*.obj
+
 # Temporary Test Data
 pompa.jpg
-optimized.ply
-optimized_gs.ply
 render_result.png
 
 # Verification Artifacts
