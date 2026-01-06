@@ -1,4 +1,4 @@
-import { initViewer, loadPly, resizeViewer } from './viewer.js';
+import { initViewer, loadPly, loadPlyFromBuffer, resizeViewer } from './viewer.js';
 
 const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
@@ -28,6 +28,7 @@ resetBtn.addEventListener('click', () => {
     dropZone.style.display = 'flex';
     fileInput.value = '';
     currentPlyUrl = null;
+    statusText.textContent = "Processing... (Usually takes 5-10s)";
 });
 
 downloadBtn.addEventListener('click', () => {
@@ -42,8 +43,33 @@ downloadBtn.addEventListener('click', () => {
 });
 
 async function handleFile(file) {
+    // 1. Check if it is a PLY file (Local Viewing)
+    if (file.name.toLowerCase().endsWith('.ply')) {
+        console.log("Local PLY file detected:", file.name);
+
+        dropZone.style.display = 'none';
+        statusBar.style.display = 'none';
+        viewerContainer.style.display = 'block';
+        statusText.textContent = "Loading Local PLY...";
+
+        resizeViewer();
+
+        try {
+            const buffer = await file.arrayBuffer();
+            await loadPlyFromBuffer(buffer);
+            statusText.textContent = "Loaded: " + file.name;
+        } catch (err) {
+            console.error(err);
+            alert("Failed to load local PLY.");
+            dropZone.style.display = 'flex';
+            viewerContainer.style.display = 'none';
+        }
+        return;
+    }
+
+    // 2. Existing Image Upload Logic
     if (!file.type.startsWith('image/')) {
-        alert('Please upload an image file (JPG, PNG).');
+        alert('Please upload an image file (JPG, PNG) or a 3D model (.ply).');
         return;
     }
 
@@ -69,13 +95,9 @@ async function handleFile(file) {
         // Success
         statusText.textContent = "Loading Viewer...";
         viewerContainer.style.display = 'block';
-        statusBar.style.display = 'none'; // Hide status when viewer starts (or keep it?)
+        statusBar.style.display = 'none';
 
-        // CRITICAL FIX: Resize now that element is visible
         resizeViewer();
-
-        // Initialize Viewer if not already
-        // Load the PLY
         await loadPly(currentPlyUrl);
 
     } catch (err) {

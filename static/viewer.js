@@ -77,6 +77,17 @@ function animate() {
 
 export async function loadPly(url) {
     console.log("Loading PLY from:", url);
+    try {
+        const response = await fetch(url);
+        const buffer = await response.arrayBuffer();
+        await loadPlyFromBuffer(buffer);
+    } catch (e) {
+        console.error("Error loading PLY URL:", e);
+        alert("Failed to load 3D model from URL. Check console.");
+    }
+}
+
+export async function loadPlyFromBuffer(buffer) {
     if (pointCloud) {
         scene.remove(pointCloud);
         if (pointCloud.geometry) pointCloud.geometry.dispose();
@@ -84,9 +95,6 @@ export async function loadPly(url) {
     }
 
     try {
-        const response = await fetch(url);
-        const buffer = await response.arrayBuffer();
-
         const geometry = parsePly(buffer);
         console.log("PLY Parsed. Vertices:", geometry.attributes.position.count);
 
@@ -98,44 +106,35 @@ export async function loadPly(url) {
         // Create a soft gaussian texture
         const sprite = textureFromCanvas();
 
-        // STABILITY UPGRADE: Opaque Cutout Mode
-        // switching transparent: false prevents sorting glitches during rotation.
-        // alphaTest: 0.1 keeps the points round but treats them as solid objects.
         const material = new THREE.PointsMaterial({
-            size: 0.3,             // Slightly larger for better overlap
+            size: 0.1,             // Smaller size for dense meshes
             vertexColors: true,
             map: sprite,
-            alphaTest: 0.1,        // Cut out the circle shape
-            transparent: false,    // CRITICAL: Disable transparency sorting for stable solid look
+            alphaTest: 0.1,
+            transparent: false,
             opacity: 1.0,
             sizeAttenuation: true
         });
 
         pointCloud = new THREE.Points(geometry, material);
-
-        // Adjust orientation
-        pointCloud.rotation.x = Math.PI;
+        pointCloud.rotation.x = Math.PI; // Flip Y/Z coordinate system if needed
 
         scene.add(pointCloud);
 
-        // Center view? 
-        // NO: For immersive 3D photo feel, we should stay at the camera origin (0,0,0)
-        // because that's where the projection is correct.
-        // Moving outside makes it look like a distorted cone.
-
         if (controls) {
-            controls.target.set(0, 0, 10); // Look forward
+            controls.target.set(0, 0, 0); // Center on origin
             controls.update();
         }
 
         if (camera) {
-            camera.position.set(0, 0, 0);  // Eye at origin
-            camera.lookAt(0, 0, 10);
+            // Reset camera to a reasonable distance
+            camera.position.set(0, 0, 5);
+            camera.lookAt(0, 0, 0);
         }
 
     } catch (e) {
-        console.error("Error loading PLY:", e);
-        alert("Failed to load 3D model. Check console for details.");
+        console.error("Error parsing PLY buffer:", e);
+        alert("Failed to parse PLY file. Ensure it is a valid 3DGS binary PLY.");
     }
 }
 

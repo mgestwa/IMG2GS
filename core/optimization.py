@@ -89,6 +89,27 @@ class GaussianOptimizer:
             {'params': [self.opacities], 'lr': 0.05},
         ], lr=lr)
 
+    def switch_to_color_optimization(self, lr=0.01):
+        """
+        Przełącza tryb optymalizacji na "tylko kolor".
+        Zamraża geometrię (pozycje, skale, rotacje, opacity) i uczy tylko SH.
+        """
+        print("[GaussianOptimizer] Switching to Color-Only Optimization (Geometry Frozen)")
+        
+        # Wyłączamy gradienty dla geometrii (dla pewności i wydajności)
+        self.means.requires_grad = False
+        self.scales.requires_grad = False
+        self.quats.requires_grad = False
+        self.opacities.requires_grad = False
+        
+        # Kolory muszą się uczyć
+        self.sh0.requires_grad = True
+        
+        # Re-inicjalizacja optymalizatora tylko z jedną grupą parametrów
+        self.optimizer = torch.optim.Adam([
+            {'params': [self.sh0], 'lr': lr}
+        ], lr=lr)
+
     def render(self, view_matrix: torch.Tensor, K: torch.Tensor, width: int, height: int) -> torch.Tensor:
         """
         Wykonuje Rasteryzację (Forward Pass).
